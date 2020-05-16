@@ -61,6 +61,8 @@ const App = () => {
           .update(newPerson)
           .then(updatedPerson => {
             setPersons(persons.map(person => person.id !== newPerson.id ? person : updatedPerson))
+            setNewName('')
+            setNewNumber('')
         })
         const newNotification = {
           style: 'success',
