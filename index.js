@@ -6,9 +6,7 @@ morgan.token('body', function (req, res) { return req.method === 'POST' ? JSON.s
 const app = express()
 
 app.use(express.json())
-app.use(cors({
-  origin: 'http://localhost:3000'
-}))
+app.use(cors())
 app.use(morgan(':method :url :status :res[content-length] :body - :response-time ms'))
 
 
@@ -115,7 +113,7 @@ const unknownEndpoint = (request, response) => {
   
 app.use(unknownEndpoint)
 
-const port = 3001
-app.listen(port, () => {
-  console.log(`Server running on port ${port}`)
+const PORT = process.env.PORT || 3001
+app.listen(PORT, () => {
+  console.log(`Server running on port ${PORT}`)
 })
