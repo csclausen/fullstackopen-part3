@@ -1,5 +1,7 @@
 const express = require('express')
 const cors = require('cors')
+const morgan = require('morgan')
+morgan.token('body', function (req, res) { return req.method === 'POST' ? JSON.stringify(req.body) : ''})
 
 const app = express()
 
@@ -7,6 +9,7 @@ app.use(express.json())
 app.use(cors({
   origin: 'http://localhost:3000'
 }))
+app.use(morgan(':method :url :status :res[content-length] :body - :response-time ms'))
 
 
 let persons = [
@@ -76,13 +79,13 @@ app.post('/api/persons', (request, response) => {
 
 app.put('/api/persons/:id', (request, response) => {
   const body = request.body
-  if (!body.content || body.content.number === undefined) {
+  if (!body || body.number === undefined) {
     return response.status(400).json({
       error: 'content missing'
     })
   }
   const id = Number(request.params.id)
-  const number = body.content.number
+  const number = body.number
   const updatedPerson = persons.find(person => person.id === id)
 
   if (!updatedPerson) {
@@ -105,6 +108,12 @@ app.delete('/api/persons/:id', (request, response) => {
     response.status(204).end()
 })
 
+
+const unknownEndpoint = (request, response) => {
+    response.status(404).send({ error: 'unknown endpoint' })
+  }
+  
+app.use(unknownEndpoint)
 
 const port = 3001
 app.listen(port, () => {
